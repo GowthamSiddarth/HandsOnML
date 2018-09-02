@@ -9,3 +9,17 @@ HOUSING_PATH = "datasets/housing"
 HOUSING_URL = DOWNLOAD_ROOT + HOUSING_PATH + "/housing.tgz"
 
 
+def fetch_housing_data(housing_url=HOUSING_URL, housing_path=HOUSING_PATH):
+    if not os.path.isdir(housing_path):
+        os.makedirs(housing_path)
+
+    tgz_path = os.path.join(housing_path, "housing.tgz")
+    urllib.request.urlretrieve(housing_url, tgz_path)
+    tgz_file = tarfile.open(tgz_path)
+    tgz_file.extractall(housing_path)
+    tgz_file.close()
+
+    os.remove(tgz_path)
+
+
+fetch_housing_data()
