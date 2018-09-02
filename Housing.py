@@ -6,6 +6,7 @@ from six.moves import urllib
 
 DOWNLOAD_ROOT = "https://raw.githubusercontent.com/ageron/handson-ml/master/"
 HOUSING_PATH = "datasets/housing"
+HOUSING_CSV = "housing.csv"
 HOUSING_URL = DOWNLOAD_ROOT + HOUSING_PATH + "/housing.tgz"
 
 
@@ -22,4 +23,14 @@ def fetch_housing_data(housing_url=HOUSING_URL, housing_path=HOUSING_PATH):
     os.remove(tgz_path)
 
 
-fetch_housing_data()
+def load_housing_data(housing_path=HOUSING_PATH, housing_csv=HOUSING_CSV):
+    housing_dataset = os.path.join(housing_path, housing_csv)
+    if not os.path.isfile(housing_dataset):
+        print("housing.csv is not found at %s" % housing_path)
+        fetch_housing_data()
+
+    return pd.read_csv(housing_dataset)
+
+
+housing_data = load_housing_data()
+print(housing_data.head())
