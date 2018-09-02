@@ -10,6 +10,19 @@ HOUSING_CSV = "housing.csv"
 HOUSING_URL = DOWNLOAD_ROOT + HOUSING_PATH + "/housing.tgz"
 
 
+def set_print_options():
+    pd.set_option('display.width', 500)
+    pd.set_option('precision', 3)
+
+
+def print_with_header(header='', body=''):
+    print(header)
+    if callable(body):
+        body()
+    else:
+        print(body)
+
+
 def fetch_housing_data(housing_url=HOUSING_URL, housing_path=HOUSING_PATH):
     if not os.path.isdir(housing_path):
         os.makedirs(housing_path)
@@ -32,5 +45,12 @@ def load_housing_data(housing_path=HOUSING_PATH, housing_csv=HOUSING_CSV):
     return pd.read_csv(housing_dataset)
 
 
-housing_data = load_housing_data()
-print(housing_data.head())
+if '__main__' == __name__:
+    set_print_options()
+    housing_data = load_housing_data()
+    print(housing_data['ocean_proximity'].value_counts())
+    print_with_header("===== Peek =====", housing_data.head())
+    print_with_header("===== Info =====", housing_data.info)
+    print_with_header("=== Describe ===", housing_data.describe())
+    print_with_header("===== Corr =====", housing_data.corr())
+    print_with_header("===== Skew =====", housing_data.skew())
