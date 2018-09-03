@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 import tarfile
+import matplotlib.pyplot as plt
 
 from six.moves import urllib
 
@@ -54,3 +55,6 @@ if '__main__' == __name__:
     print_with_header("=== Describe ===", housing_data.describe())
     print_with_header("===== Corr =====", housing_data.corr())
     print_with_header("===== Skew =====", housing_data.skew())
+
+    housing_data.hist()
+    plt.show()
