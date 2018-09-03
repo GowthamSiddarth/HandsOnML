@@ -2,6 +2,7 @@ import os
 import pandas as pd
 import tarfile
 import matplotlib.pyplot as plt
+import hashlib
 import numpy as np
 
 from six.moves import urllib
@@ -47,12 +48,14 @@ def load_housing_data(housing_path=HOUSING_PATH, housing_csv=HOUSING_CSV):
     return pd.read_csv(housing_dataset)
 
 
-def split_train_test(dataset, test_set_ratio=0.25):
-    np.random.seed(42)
-    shuffled_indices = np.random.permutation(len(dataset))
-    test_set_size = int(len(dataset) * test_set_ratio)
-    train_set_indices, test_set_indices = shuffled_indices[test_set_size:], shuffled_indices[:test_set_size]
-    return dataset.iloc[train_set_indices], dataset.iloc[test_set_indices]
+def test_set_check(identifier, test_set_ratio, hash):
+    return hash(np.int64(identifier)).digest()[-1] < 256 * test_set_ratio
+
+
+def split_train_test(dataset, test_set_ratio, identifier, hash=hashlib.md5):
+    ids = dataset[identifier]
+    test_set_ids = ids.apply(lambda id: test_set_check(id, test_set_ratio, hash))
+    return dataset[~test_set_ids], dataset[test_set_ids]
 
 
 if '__main__' == __name__:
@@ -65,8 +68,10 @@ if '__main__' == __name__:
     print_with_header("===== Corr =====", housing_data.corr())
     print_with_header("===== Skew =====", housing_data.skew())
 
-    #housing_data.hist()
-    #plt.show()
+    # housing_data.hist()
+    # plt.show()
 
-    train_set, test_set = split_train_test(housing_data)
+    housing_data_with_id = housing_data.reset_index()
+    test_size, identifier = 0.2, "index"
+    train_set, test_set = split_train_test(housing_data_with_id, test_size, identifier)
     print("len of train_set = %d, test_set = %d" % (len(train_set), len(test_set)))
