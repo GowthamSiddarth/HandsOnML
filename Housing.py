@@ -7,6 +7,7 @@ import numpy as np
 
 from six.moves import urllib
 from sklearn.model_selection import StratifiedShuffleSplit
+from pandas.plotting import scatter_matrix
 
 DOWNLOAD_ROOT = "https://raw.githubusercontent.com/ageron/handson-ml/master/"
 HOUSING_PATH = "datasets/housing"
@@ -107,4 +108,8 @@ if '__main__' == __name__:
     housing_data_copy.plot(kind="scatter", x="longitude", y="latitude", alpha=0.4,
                            s=housing_data_copy["population"] / 100, label="population",
                            c="median_house_value", cmap=plt.get_cmap("jet"), colorbar=True)
+
+    attributes = ["median_house_value", "median_income", "total_rooms", "housing_median_age"]
+    scatter_matrix(housing_data_copy[attributes], figsize=(10, 8))
+
     plt.show()
