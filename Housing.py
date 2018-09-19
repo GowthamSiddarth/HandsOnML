@@ -102,5 +102,9 @@ if '__main__' == __name__:
                                                                           len(stratified_test_set)))
 
     housing_data_copy = housing_data.copy()
-    housing_data_copy.plot(kind="scatter", x="latitude", y="longitude", alpha=0.1)
+    housing_data_copy.plot(kind="scatter", x="longitude", y="latitude", alpha=0.1)
+
+    housing_data_copy.plot(kind="scatter", x="longitude", y="latitude", alpha=0.4,
+                           s=housing_data_copy["population"] / 100, label="population",
+                           c="median_house_value", cmap=plt.get_cmap("jet"), colorbar=True)
     plt.show()
