@@ -6,6 +6,7 @@ import hashlib
 import numpy as np
 
 from six.moves import urllib
+from sklearn.model_selection import StratifiedShuffleSplit
 
 DOWNLOAD_ROOT = "https://raw.githubusercontent.com/ageron/handson-ml/master/"
 HOUSING_PATH = "datasets/housing"
@@ -58,6 +59,17 @@ def split_train_test(dataset, test_set_ratio, identifier, hash=hashlib.md5):
     return dataset[~test_set_ids], dataset[test_set_ids]
 
 
+def stratified_split_train_test_with_income(dataset, test_set_ratio, random_state):
+    stratified_split = StratifiedShuffleSplit(n_splits=1, random_state=random_state, test_size=test_set_ratio)
+    dataset["income_cat"] = np.ceil(dataset["median_income"] / 1.5)
+    dataset["income_cat"].where(dataset["income_cat"] < 5, 5.0, inplace=True)
+
+    # print(housing_data["income_cat"].value_counts() / len(housing_data))
+
+    for train_index, test_index in stratified_split.split(dataset, dataset["income_cat"]):
+        return dataset.loc[train_index], dataset.loc[test_index]
+
+
 if '__main__' == __name__:
     set_print_options()
     housing_data = load_housing_data()
@@ -75,3 +87,5 @@ if '__main__' == __name__:
     test_size, identifier = 0.2, "index"
     train_set, test_set = split_train_test(housing_data_with_id, test_size, identifier)
     print("len of train_set = %d, test_set = %d" % (len(train_set), len(test_set)))
+
+    stratified_train_set, stratified_test_set = stratified_split_train_test_with_income(housing_data, test_size, 42)
