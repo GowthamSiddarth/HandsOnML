@@ -89,9 +89,18 @@ if '__main__' == __name__:
     # plt.show()
 
     housing_data_with_id = housing_data.reset_index()
-    test_size, identifier = 0.2, "index"
+    test_size = 0.2
+
+    identifier = "index"
     train_set, test_set = split_train_test(housing_data_with_id, test_size, identifier)
     print("len of train_set = %d, test_set = %d" % (len(train_set), len(test_set)))
 
-    stratified_train_set, stratified_test_set = stratified_split_train_test_with_income(housing_data, test_size, 42)
-    print("len of stratified_train_set = %d, stratified_test_set = %d" % (len(stratified_train_set), len(stratified_test_set)))
+    random_state = 42
+    stratified_train_set, stratified_test_set = stratified_split_train_test_with_income(housing_data, test_size,
+                                                                                        random_state)
+    print("len of stratified_train_set = %d, stratified_test_set = %d" % (len(stratified_train_set),
+                                                                          len(stratified_test_set)))
+
+    housing_data_copy = housing_data.copy()
+    housing_data_copy.plot(kind="scatter", x="latitude", y="longitude", alpha=0.1)
+    plt.show()
