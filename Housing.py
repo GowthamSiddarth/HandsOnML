@@ -67,7 +67,12 @@ def stratified_split_train_test_with_income(dataset, test_set_ratio, random_stat
     # print(housing_data["income_cat"].value_counts() / len(housing_data))
 
     for train_index, test_index in stratified_split.split(dataset, dataset["income_cat"]):
-        return dataset.loc[train_index], dataset.loc[test_index]
+        strata_train_set, strata_test_set = dataset.loc[train_index], dataset.loc[test_index]
+
+    for dataset in strata_train_set, strata_test_set:
+        dataset.drop(["income_cat"], axis=1, inplace=True)
+
+    return strata_train_set, strata_test_set
 
 
 if '__main__' == __name__:
@@ -89,3 +94,4 @@ if '__main__' == __name__:
     print("len of train_set = %d, test_set = %d" % (len(train_set), len(test_set)))
 
     stratified_train_set, stratified_test_set = stratified_split_train_test_with_income(housing_data, test_size, 42)
+    print("len of stratified_train_set = %d, stratified_test_set = %d" % (len(stratified_train_set), len(stratified_test_set)))
