@@ -7,6 +7,7 @@ import numpy as np
 
 from six.moves import urllib
 from sklearn.model_selection import StratifiedShuffleSplit
+from sklearn.preprocessing import Imputer
 from pandas.plotting import scatter_matrix
 
 DOWNLOAD_ROOT = "https://raw.githubusercontent.com/ageron/handson-ml/master/"
@@ -93,8 +94,7 @@ if '__main__' == __name__:
                       housing_data.corr()["median_house_value"].sort_values(ascending=True))
     print_with_header("===== Skew =====", housing_data.skew())
 
-    # housing_data.hist()
-    # plt.show()
+    housing_data.hist()
 
     housing_data_with_id = housing_data.reset_index()
     test_size = 0.2
@@ -119,4 +119,19 @@ if '__main__' == __name__:
     attributes = ["median_house_value", "median_income", "total_rooms", "housing_median_age"]
     scatter_matrix(housing_data_copy[attributes], figsize=(10, 8))
 
-    plt.show()
+    # plt.show()
+
+    housing_data_features = housing_data.drop("median_house_value", axis=1)
+    housing_data_labels = housing_data["median_house_value"].copy()
+
+    imputer = Imputer(strategy="median")
+    housing_data_num_features = housing_data.drop("ocean_proximity", axis=1)
+    imputer.fit(housing_data_num_features)
+
+    print_with_header("===== Median of Num Attributes =====", housing_data_num_features.median().values)
+    print_with_header("===== Imputer Computed Values  =====", imputer.statistics_)
+
+    X = imputer.transform(housing_data_num_features)
+    housing_data_num_tr_features = pd.DataFrame(X, columns=housing_data_num_features.columns)
+
+    print_with_header("===== Info =====", housing_data_num_tr_features.info)
