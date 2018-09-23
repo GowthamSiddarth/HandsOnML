@@ -79,11 +79,18 @@ def stratified_split_train_test_with_income(dataset, test_set_ratio, random_stat
 if '__main__' == __name__:
     set_print_options()
     housing_data = load_housing_data()
+
+    housing_data["rooms_per_household"] = housing_data["total_rooms"] / housing_data["households"]
+    housing_data["bedrooms_per_room"] = housing_data["total_bedrooms"] / housing_data["total_rooms"]
+    housing_data["population_per_household"] = housing_data["population"] / housing_data["households"]
+
     print(housing_data['ocean_proximity'].value_counts())
     print_with_header("===== Peek =====", housing_data.head())
     print_with_header("===== Info =====", housing_data.info)
     print_with_header("=== Describe ===", housing_data.describe())
     print_with_header("===== Corr =====", housing_data.corr())
+    print_with_header("===== Corr of Median House Values =====",
+                      housing_data.corr()["median_house_value"].sort_values(ascending=True))
     print_with_header("===== Skew =====", housing_data.skew())
 
     # housing_data.hist()
