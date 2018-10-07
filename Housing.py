@@ -8,6 +8,7 @@ import numpy as np
 from six.moves import urllib
 from sklearn.model_selection import StratifiedShuffleSplit
 from sklearn.preprocessing import Imputer, LabelEncoder, OneHotEncoder, LabelBinarizer
+from sklearn.pipeline import FeatureUnion
 from pandas.plotting import scatter_matrix
 
 from CombinedAttributesAdder import CombinedAttributesAdder
@@ -84,6 +85,22 @@ if '__main__' == __name__:
     housing_data = load_housing_data()
     columns_names = list(housing_data)
 
+    encoder = LabelEncoder()
+    housing_data_cat_feature = housing_data["ocean_proximity"]
+    housing_data_cat_feature_encoded = encoder.fit_transform(housing_data_cat_feature)
+    print_with_header("Ocean Proximity Encoded", housing_data_cat_feature_encoded)
+    print_with_header("Classes Encoded", encoder.classes_)
+
+    encoder = OneHotEncoder()
+    housing_data_cat_feature_1hot_encoded = encoder.fit_transform(housing_data_cat_feature_encoded.reshape(-1, 1))
+    print_with_header("Ocean Proximity OneHot Encoded", housing_data_cat_feature_1hot_encoded.toarray())
+
+    encoder = LabelBinarizer()
+    housing_data_cat_feature_1hot_encoded = encoder.fit_transform(housing_data_cat_feature)
+    print_with_header("Ocean Proximity 1Hot Encoded with LabelBinarizer",
+                      housing_data_cat_feature_1hot_encoded)
+
+
     attrs_addr = CombinedAttributesAdder()
     housing_data_attrs = attrs_addr.transform(housing_data.values)
     columns_names = columns_names + ["rooms_per_household", "bedrooms_per_room", "population_per_household"]
@@ -144,18 +161,3 @@ if '__main__' == __name__:
     housing_data_num_tr_features = pd.DataFrame(X, columns=housing_data_num_features.columns)
 
     print_with_header("===== Info =====", housing_data_num_tr_features.info)
-
-    encoder = LabelEncoder()
-    housing_data_cat_feature = housing_data["ocean_proximity"]
-    housing_data_cat_feature_encoded = encoder.fit_transform(housing_data_cat_feature)
-    print_with_header("Ocean Proximity Encoded", housing_data_cat_feature_encoded)
-    print_with_header("Classes Encoded", encoder.classes_)
-
-    encoder = OneHotEncoder()
-    housing_data_cat_feature_1hot_encoded = encoder.fit_transform(housing_data_cat_feature_encoded.reshape(-1, 1))
-    print_with_header("Ocean Proximity OneHot Encoded", housing_data_cat_feature_1hot_encoded.toarray())
-
-    encoder = LabelBinarizer()
-    housing_data_cat_feature_1hot_encoded = encoder.fit_transform(housing_data_cat_feature)
-    print_with_header("Ocean Proximity 1Hot Encoded with LabelBinarizer",
-                      housing_data_cat_feature_1hot_encoded)
