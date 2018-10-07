@@ -7,7 +7,7 @@ import numpy as np
 
 from six.moves import urllib
 from sklearn.model_selection import StratifiedShuffleSplit
-from sklearn.preprocessing import Imputer
+from sklearn.preprocessing import Imputer, LabelEncoder
 from pandas.plotting import scatter_matrix
 
 DOWNLOAD_ROOT = "https://raw.githubusercontent.com/ageron/handson-ml/master/"
@@ -135,3 +135,9 @@ if '__main__' == __name__:
     housing_data_num_tr_features = pd.DataFrame(X, columns=housing_data_num_features.columns)
 
     print_with_header("===== Info =====", housing_data_num_tr_features.info)
+
+    encoder = LabelEncoder()
+    housing_data_cat_feature = housing_data["ocean_proximity"]
+    housing_data_cat_feature_encoded = encoder.fit_transform(housing_data_cat_feature)
+    print_with_header("Ocean Proximity Encoded", housing_data_cat_feature_encoded)
+    print_with_header("Classes Encoded", encoder.classes_)
