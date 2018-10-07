@@ -10,6 +10,8 @@ from sklearn.model_selection import StratifiedShuffleSplit
 from sklearn.preprocessing import Imputer, LabelEncoder, OneHotEncoder, LabelBinarizer
 from pandas.plotting import scatter_matrix
 
+from CombinedAttributesAdder import CombinedAttributesAdder
+
 DOWNLOAD_ROOT = "https://raw.githubusercontent.com/ageron/handson-ml/master/"
 HOUSING_PATH = "datasets/housing"
 HOUSING_CSV = "housing.csv"
@@ -80,6 +82,13 @@ def stratified_split_train_test_with_income(dataset, test_set_ratio, random_stat
 if '__main__' == __name__:
     set_print_options()
     housing_data = load_housing_data()
+    columns_names = list(housing_data)
+
+    attrs_addr = CombinedAttributesAdder()
+    housing_data_attrs = attrs_addr.transform(housing_data.values)
+    columns_names = columns_names + ["rooms_per_household", "bedrooms_per_room", "population_per_household"]
+    print_with_header("Columns Names", columns_names)
+    # housing_data = pd.DataFrame(data=housing_data_attrs, columns=columns_names)
 
     housing_data["rooms_per_household"] = housing_data["total_rooms"] / housing_data["households"]
     housing_data["bedrooms_per_room"] = housing_data["total_bedrooms"] / housing_data["total_rooms"]
