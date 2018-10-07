@@ -7,11 +7,13 @@ import numpy as np
 
 from six.moves import urllib
 from sklearn.model_selection import StratifiedShuffleSplit
-from sklearn.preprocessing import Imputer, LabelEncoder, OneHotEncoder, LabelBinarizer
-from sklearn.pipeline import FeatureUnion
+from sklearn.preprocessing import Imputer, LabelEncoder, OneHotEncoder, LabelBinarizer, StandardScaler
+from sklearn.pipeline import FeatureUnion, Pipeline
 from pandas.plotting import scatter_matrix
 
 from CombinedAttributesAdder import CombinedAttributesAdder
+from DataFrameSelector import DataFrameSelector
+from LabelBinarizerPipelineFriendly import LabelBinarizerPipelineFriendly
 
 DOWNLOAD_ROOT = "https://raw.githubusercontent.com/ageron/handson-ml/master/"
 HOUSING_PATH = "datasets/housing"
@@ -161,3 +163,26 @@ if '__main__' == __name__:
     housing_data_num_tr_features = pd.DataFrame(X, columns=housing_data_num_features.columns)
 
     print_with_header("===== Info =====", housing_data_num_tr_features.info)
+
+    num_attrs, cat_atts = list(housing_data_num_features), ["ocean_proximity"]
+
+    num_pipeline = Pipeline([
+        ('selector', DataFrameSelector(num_attrs)),
+        ('imputer', Imputer(strategy='median')),
+        ('attributes_adder', CombinedAttributesAdder()),
+        ('standard_scaler', StandardScaler())
+    ])
+
+    cat_pipeline = Pipeline([
+        ('selector', DataFrameSelector(cat_atts)),
+        ('label_binarizer', LabelBinarizerPipelineFriendly())
+    ])
+
+    full_pipeline = FeatureUnion(transformer_list=[
+        ("num_pipeline", num_pipeline),
+        ("cat_pipeline", cat_pipeline)
+    ])
+
+    housing_data_prep = full_pipeline.fit_transform(housing_data)
+    print_with_header("Housing Data Preprocessed with Pipelines", housing_data_prep)
+    print_with_header("Shape", housing_data_prep.shape)
