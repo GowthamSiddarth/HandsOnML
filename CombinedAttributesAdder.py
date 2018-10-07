@@ -8,7 +8,7 @@ class CombinedAttributesAdder(BaseEstimator, TransformerMixin):
     def __init__(self, add_bedrooms_per_room=True):
         self.add_bedrooms_per_room = add_bedrooms_per_room
 
-    def fit(self):
+    def fit(self, X):
         return self
 
     def transform(self, X, y=None):
