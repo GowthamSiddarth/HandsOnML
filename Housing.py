@@ -9,6 +9,7 @@ from six.moves import urllib
 from sklearn.model_selection import StratifiedShuffleSplit
 from sklearn.preprocessing import Imputer, LabelEncoder, OneHotEncoder, LabelBinarizer, StandardScaler
 from sklearn.pipeline import FeatureUnion, Pipeline
+from sklearn.linear_model import LinearRegression
 from pandas.plotting import scatter_matrix
 
 from CombinedAttributesAdder import CombinedAttributesAdder
@@ -102,7 +103,6 @@ if '__main__' == __name__:
     print_with_header("Ocean Proximity 1Hot Encoded with LabelBinarizer",
                       housing_data_cat_feature_1hot_encoded)
 
-
     attrs_addr = CombinedAttributesAdder()
     housing_data_attrs = attrs_addr.transform(housing_data.values)
     columns_names = columns_names + ["rooms_per_household", "bedrooms_per_room", "population_per_household"]
@@ -186,3 +186,11 @@ if '__main__' == __name__:
     housing_data_prep = full_pipeline.fit_transform(housing_data)
     print_with_header("Housing Data Preprocessed with Pipelines", housing_data_prep)
     print_with_header("Shape", housing_data_prep.shape)
+
+    lin_regression = LinearRegression()
+    lin_regression.fit(housing_data_prep, housing_data_labels)
+
+    some_data, some_labels = housing_data.iloc[:5], housing_data_labels.iloc[:5]
+    some_data_prep = full_pipeline.transform(some_data)
+    print_with_header("Predictions", lin_regression.predict(some_data_prep))
+    print_with_header("Labels", some_labels)
