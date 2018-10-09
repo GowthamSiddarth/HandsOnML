@@ -10,6 +10,7 @@ from sklearn.model_selection import StratifiedShuffleSplit
 from sklearn.preprocessing import Imputer, LabelEncoder, OneHotEncoder, LabelBinarizer, StandardScaler
 from sklearn.pipeline import FeatureUnion, Pipeline
 from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error
 from pandas.plotting import scatter_matrix
 
 from CombinedAttributesAdder import CombinedAttributesAdder
@@ -192,5 +193,12 @@ if '__main__' == __name__:
 
     some_data, some_labels = housing_data.iloc[:5], housing_data_labels.iloc[:5]
     some_data_prep = full_pipeline.transform(some_data)
-    print_with_header("Predictions", lin_regression.predict(some_data_prep))
+    some_data_predictions = lin_regression.predict(some_data_prep)
+
+    print_with_header("Predictions", some_data_predictions)
     print_with_header("Labels", some_labels)
+
+    housing_predictions = lin_regression.predict(housing_data_prep)
+    lin_regression_mse = mean_squared_error(housing_data_labels, housing_predictions)
+    lin_regression_rmse = np.sqrt(lin_regression_mse)
+    print_with_header("RMSE", lin_regression_rmse)
